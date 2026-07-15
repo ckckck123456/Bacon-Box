@@ -1,0 +1,114 @@
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+
+WindUI.TransparencyValue = 0.2
+WindUI:SetTheme("Dark")
+
+local Window = WindUI:CreateWindow({
+    Title = "每步+1智商",
+    Icon = "brain",
+    Folder = "StepPlusIQ",
+    Size = UDim2.fromOffset(700, 500),
+    Theme = "Dark",
+    SideBarWidth = 220,
+    ScrollBarEnabled = true
+})
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
+
+local StepEvent = RemoteEvents:WaitForChild("StepTaken")
+local RebirthEvent = RemoteEvents:WaitForChild("DoRebirth")
+local DuelEvent = RemoteEvents:WaitForChild("DuelEnd")
+
+local _G_StepLoop = false
+local _G_AutoRebirth = false
+local _G_AutoTeleport = false
+local IsUnlocking = false
+
+task.spawn(function()
+    while true do
+        if _G_StepLoop then
+            for i = 1, 10 do StepEvent:FireServer() end
+        end
+        task.wait(0.1)
+    end
+end)
+
+task.spawn(function()
+    while true do
+        if _G_AutoRebirth then RebirthEvent:FireServer() end
+        task.wait(0.5)
+    end
+end)
+
+task.spawn(function()
+    local targetPos = Vector3.new(-2.45, 7.72, 788.82)
+    while true do
+        if _G_AutoTeleport then
+            local lp = Players.LocalPlayer
+            if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+                lp.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos)
+            end
+        end
+        task.wait(2)
+    end
+end)
+
+local CombatTab = Window:Tab({ Title = '功能', Icon = 'swords' })
+Window:SelectTab(1)
+
+CombatTab:Toggle({
+    Title = "自动刷经验",
+    Value = false,
+    Callback = function(state) 
+        _G_StepLoop = state 
+    end
+})
+
+CombatTab:Toggle({
+    Title = "自动重生",
+    Value = false,
+    Callback = function(state) 
+        _G_AutoRebirth = state 
+    end
+})
+
+CombatTab:Toggle({
+    Title = "自动刷皇冠(需解锁所有关卡)",
+    Value = false,
+    Callback = function(state) 
+        _G_AutoTeleport = state 
+        WindUI:Notify({
+            Title = "传送系统",
+            Content = state and "已开始循环传送" or "已停止传送",
+            Duration = 2
+        })
+    end
+})
+
+CombatTab:Button({
+    Title = "解锁所有关卡",
+    Callback = function()
+        if IsUnlocking then return end
+        IsUnlocking = true
+        task.spawn(function()
+            for i = 1, 30 do
+                DuelEvent:FireServer(true, i)
+                task.wait(1)
+            end
+            IsUnlocking = false
+            WindUI:Notify({ Title = "完成", Content = "1-30 关卡已全部解锁", Duration = 5 })
+        end)
+    end
+})
+
+Window:OnClose(function()
+    print("Window closed")
+end)
+
+Window:OnDestroy(function()
+    print("Window destroyed")
+end)
+
+print(" 每一步+1智商已加载完成！")
