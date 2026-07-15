@@ -1,0 +1,435 @@
+local WindUI
+
+do
+    local ok, result = pcall(function()
+        return require("./src/Init")
+    end)
+
+    if ok then
+        WindUI = result
+    else 
+        WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Potato5466794/Wind/refs/heads/main/Wind.luau"))()
+    end
+end
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
+
+-- 愤怒机器人功能代码
+local AuraRunning = false
+local TimerConnection = nil
+
+local function GetNil(Name, DebugId)
+    for _, Object in getnilinstances() do
+        if Object.Name == Name and Object:GetDebugId() == DebugId then
+            return Object
+        end
+    end
+    return nil
+end
+
+function GetEvents()
+    local events = {}
+    
+    local paths = {
+        {Path = "ReplicatedStorage.Events.Damage", Name = "Damage"},
+        {Path = "robloxReplicatedStorage.Events.Damage", Name = "Damage"},
+        {Path = "ReplicatedStorage.Events.GunshotSound", Name = "GunshotSound"},
+        {Path = "robloxReplicatedStorage.Events.GunshotSound", Name = "GunshotSound"},
+        {Path = "ReplicatedStorage.Damage", Name = "Damage"},
+        {Path = "robloxReplicatedStorage.Damage", Name = "Damage"},
+    }
+    
+    for _, info in ipairs(paths) do
+        local parts = {}
+        for part in string.gmatch(info.Path, "[^%.]+") do
+            table.insert(parts, part)
+        end
+        
+        local current = game
+        local found = true
+        for _, part in ipairs(parts) do
+            if current then
+                current = current:FindFirstChild(part)
+                if not current then
+                    found = false
+                    break
+                end
+            else
+                found = false
+                break
+            end
+        end
+        
+        if found and current then
+            table.insert(events, {
+                Name = info.Name,
+                Object = current,
+                Path = info.Path
+            })
+        end
+    end
+    
+    return events
+end
+
+function GetAllTargets()
+    local targets = {}
+    local player = game.Players.LocalPlayer
+    if not player then return targets end
+    
+    for _, plr in ipairs(game.Players:GetPlayers()) do
+        if plr ~= player and plr.Character then
+            local char = plr.Character
+            local humanoid = char:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                table.insert(targets, {
+                    Player = plr,
+                    Character = char,
+                    Humanoid = humanoid,
+                    Type = "玩家",
+                    Name = plr.Name
+                })
+            end
+        end
+    end
+    
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj:FindFirstChild("Humanoid") then
+            local humanoid = obj:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health > 0 then
+                local isPlayer = false
+                for _, plr in ipairs(game.Players:GetPlayers()) do
+                    if plr.Character == obj then
+                        isPlayer = true
+                        break
+                    end
+                end
+                
+                if not isPlayer then
+                    table.insert(targets, {
+                        Player = nil,
+                        Character = obj,
+                        Humanoid = humanoid,
+                        Type = "AI",
+                        Name = obj.Name
+                    })
+                end
+            end
+        end
+    end
+    
+    return targets
+end
+
+function SpoofAttack(target)
+    if not target or not target.Character then return false end
+    
+    local events = GetEvents()
+    if #events == 0 then return false end
+    
+    local success = false
+    
+    local head = target.Character:FindFirstChild("Head")
+    local torso = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("UpperTorso")
+    local humanoid = target.Character:FindFirstChild("Humanoid")
+    
+    if not humanoid or not head then return false end
+    
+    local headDebugId = nil
+    local torsoDebugId = nil
+    local humanoidDebugId = nil
+    
+    local suc, id = pcall(function() headDebugId = head:GetDebugId() end)
+    if not suc then headDebugId = nil end
+    
+    if torso then
+        suc, id = pcall(function() torsoDebugId = torso:GetDebugId() end)
+        if not suc then torsoDebugId = nil end
+    end
+    
+    suc, id = pcall(function() humanoidDebugId = humanoid:GetDebugId() end)
+    if not suc then humanoidDebugId = nil end
+    
+    local gunEvent = nil
+    local damageEvent = nil
+    
+    for _, event in ipairs(events) do
+        if event.Name == "GunshotSound" then
+            gunEvent = event.Object
+        elseif event.Name == "Damage" then
+            damageEvent = event.Object
+        end
+    end
+    
+    if gunEvent then
+        local weaponNames = {"Normal Pistol", "Silenced Pistol", "Revolver", "Shotgun", "Rifle"}
+        local weapon = weaponNames[math.random(1, #weaponNames)]
+        local pos = head.Position + Vector3.new(math.random(-5, 5), math.random(-2, 2), math.random(-5, 5))
+        
+        pcall(function()
+            gunEvent:FireServer(weapon, pos)
+        end)
+    end
+    
+    if damageEvent then
+        if headDebugId and humanoidDebugId then
+            local headRef = GetNil("Head", headDebugId)
+            local humanoidRef = GetNil("Humanoid", humanoidDebugId)
+            
+            if headRef and humanoidRef then
+                local suc, err = pcall(function()
+                    damageEvent:FireServer(headRef, humanoidRef)
+                end)
+                if suc then 
+                    success = true 
+                end
+            end
+        end
+        
+        if not success then
+            local suc, err = pcall(function()
+                damageEvent:FireServer(head, humanoid)
+            end)
+            if suc then success = true end
+        end
+        
+        if not success and torso then
+            local suc, err = pcall(function()
+                damageEvent:FireServer(torso, humanoid)
+            end)
+            if suc then success = true end
+        end
+        
+        if not success then
+            local parts = {"Head", "Torso", "UpperTorso", "LowerTorso", "HumanoidRootPart", 
+                          "Left Arm", "Right Arm", "Left Leg", "Right Leg"}
+            for _, partName in ipairs(parts) do
+                local part = target.Character:FindFirstChild(partName)
+                if part then
+                    local suc, err = pcall(function()
+                        damageEvent:FireServer(part, humanoid)
+                    end)
+                    if suc then 
+                        success = true 
+                        break
+                    end
+                end
+            end
+        end
+    end
+    
+    if success then
+        task.wait(0.05)
+        if gunEvent then
+            pcall(function()
+                gunEvent:FireServer("Normal Pistol", head.Position)
+            end)
+        end
+    end
+    
+    return success
+end
+
+function AttackAllTargets()
+    local targets = GetAllTargets()
+    
+    if #targets == 0 then
+        return false
+    end
+    
+    local attackedCount = 0
+    
+    for _, target in ipairs(targets) do
+        if target.Humanoid and target.Humanoid.Health > 0 then
+            if SpoofAttack(target) then
+                attackedCount = attackedCount + 1
+                task.wait(0.05)
+            end
+        end
+    end
+    
+    if attackedCount > 0 then
+        return true
+    else
+        return false
+    end
+end
+
+function StartAura(attackDelay)
+    if AuraRunning then return end
+    
+    local events = GetEvents()
+    if #events == 0 then
+        return
+    end
+    
+    AuraRunning = true
+    
+    TimerConnection = game:GetService("RunService").Stepped:Connect(function()
+        if not AuraRunning then
+            TimerConnection:Disconnect()
+            return
+        end
+        
+        AttackAllTargets()
+        task.wait(attackDelay or 0.5)
+    end)
+end
+
+function StopAura()
+    AuraRunning = false
+    
+    if TimerConnection then
+        TimerConnection:Disconnect()
+        TimerConnection = nil
+    end
+end
+
+local Window = WindUI:CreateWindow({
+    Title = "<font color='#FFB6C1'>一</font><font color='#FFA0B5'>击</font><font color='#FF8AA9'>竞</font><font color='#FF749D'>技</font><font color='#FF5E91'>场</font>",
+    Folder = "yjjjc",
+    NewElements = true,
+    HideSearchBar = false,
+    Size = UDim2.fromOffset(200, 395),
+    Theme = "Dark",
+    UserEnabled = true,
+    SideBarWidth = 135,
+    HasOutline = true,
+    Background = "video:https://raw.githubusercontent.com/xiaoxi9008/chesksks/refs/heads/main/Video_1773198866292_902.mp4",
+    
+    OpenButton = {
+        Title = "<font color='#FFB6C1'>一</font><font color='#FFA0B5'>击</font><font color='#FF8AA9'>竞</font><font color='#FF749D'>技</font><font color='#FF5E91'>场</font>",
+        CornerRadius = UDim.new(1,0),
+        StrokeThickness = 3,
+        Enabled = true,
+        Draggable = true,
+        OnlyMobile = false,
+        Color = ColorSequence.new(
+            Color3.fromHex("FF69B4"), 
+            Color3.fromHex("FF69B4")
+        )
+    },
+    Topbar = {
+        Height = 44,
+        ButtonsType = "Mac",
+    }
+})
+
+do
+    Window:Tag({
+        Title = "免费版",
+        Color = Color3.fromHex("FF69B4")
+    })
+end
+
+local Grey = Color3.fromHex("#83889E")
+
+-- 创建功能标签
+local FunctionTab = Window:Tab({
+    Title = "功能",
+    Desc = "一键竞技场功能", 
+    Icon = "solar:gamepad-bold",
+    IconColor = Grey,
+    IconShape = "Square",
+    Border = true,
+})
+
+-- 创建愤怒机器人部分
+local AuraSection = FunctionTab:Section({
+    Title = "愤怒机器人",
+})
+
+-- 启动按钮
+AuraSection:Button({
+    Title = "启动愤怒机器人",
+    Icon = "play",
+    Callback = function()
+        StartAura(0.5)
+        WindUI:Notify({
+            Title = "愤怒机器人",
+            Icon = "robot",
+            Duration = 2
+        })
+    end
+})
+
+-- 停止按钮
+AuraSection:Button({
+    Title = "停止愤怒机器人",
+    Icon = "stop",
+    Color = Color3.fromHex("#ff4830"),
+    Callback = function()
+        StopAura()
+        WindUI:Notify({
+            Title = "愤怒机器人",
+            Content = "已停止！",
+            Icon = "robot",
+            Duration = 2
+        })
+    end
+})
+
+-- 启动彩虹边框动画
+local function startRainbowBorder()
+    local mainFrame = Window.UIElements and Window.UIElements.Main
+    if not mainFrame then
+        task.wait(0.2)
+        mainFrame = Window.UIElements and Window.UIElements.Main
+        if not mainFrame then
+            warn("无法找到窗口主框架")
+            return
+        end
+    end
+    
+    local corner = mainFrame:FindFirstChildOfClass("UICorner")
+    if not corner then
+        corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 16)
+        corner.Parent = mainFrame
+    end
+    
+    local oldStroke = mainFrame:FindFirstChild("RainbowStroke")
+    if oldStroke then oldStroke:Destroy() end
+    
+    local colorScheme = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromHex("FF69B4")),
+        ColorSequenceKeypoint.new(0.25, Color3.fromHex("FF1493")),
+        ColorSequenceKeypoint.new(0.5, Color3.fromHex("FFB6C1")),
+        ColorSequenceKeypoint.new(0.75, Color3.fromHex("FF69B4")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("FF1493"))
+    })
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Name = "RainbowStroke"
+    stroke.Thickness = 3
+    stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.LineJoinMode = Enum.LineJoinMode.Round
+    stroke.Parent = mainFrame
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = colorScheme
+    gradient.Rotation = 0
+    gradient.Parent = stroke
+    
+    local runService = game:GetService("RunService")
+    local angle = 0
+    local animationConnection = runService.Heartbeat:Connect(function(deltaTime)
+        if not stroke or stroke.Parent == nil then
+            animationConnection:Disconnect()
+            return
+        end
+        angle = (angle + 180 * deltaTime) % 360
+        gradient.Rotation = angle
+    end)
+    
+    print("边框动画已启动")
+    return animationConnection
+end
+
+startRainbowBorder()
