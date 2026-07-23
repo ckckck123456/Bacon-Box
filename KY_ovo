@@ -115,7 +115,9 @@ local Tabs = {
 }
 
 local TabHandles = {
+    Gonggao = Tabs.KY1:Tab({ Title = "公告", Icon = "bell" }),
     Elements = Tabs.Main:Tab({ Title = "功能", Icon = "layout-grid" }),
+    Zizhi = Tabs.KY2:Tab({ Title = "自制/自主缝合", Icon = "scissors" }),
     Appearance = Tabs.Settings:Tab({ Title = "墨水游戏", Icon = "brush" }),
     Appearane = Tabs.Settings:Tab({ Title = "被遗弃", Icon = "brush" }),
     Apearane = Tabs.Settings:Tab({ Title = "死亡之死", Icon = "brush" }),
@@ -130,14 +132,23 @@ local TabHandles = {
     Apetyttrne = Tabs.Settings:Tab({ Title = "内脏与黑火药", Icon = "brush" }),
     Aparanhsuree = Tabs.Settings:Tab({ Title = "项目三角洲", Icon = "brush" }),
     Aparanrhsuree = Tabs.Settings:Tab({ Title = "鱼", Icon = "brush" }),
-    Aparanrhsuree = Tabs.Settings:Tab({ Title = "兵工厂", Icon = "brush" }),
+    Aparanrhsuree2 = Tabs.Settings:Tab({ Title = "兵工厂", Icon = "brush" }),
     Aparanrhsurtree = Tabs.Settings:Tab({ Title = "河北唐县", Icon = "brush" }),
     Aparanrhsutree = Tabs.Settings:Tab({ Title = "51区", Icon = "brush" }),
-    Aparanrhsyuree = Tabs.Settings:Tab({ Title = "死铁轨", Icon = "brush" }),
+    Aparanrhsyuree = Tabs.Settings:Tab({ Title = "死铁轨2", Icon = "brush" }),
     Config = Tabs.Utilities:Tab({ Title = "非服务器", Icon = "settings" }),
 }
+
 local noclipActive = false
 local noclipThread = nil
+
+TabHandles.Gonggao:Collapsible({
+    Title = "公告",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
 
 TabHandles.Elements:Button({
     Title = "KY飞行",
@@ -181,188 +192,287 @@ TabHandles.Elements:Button({
 
 TabHandles.Elements:Divider()
 
-TabHandles.Appearance:Paragraph({
+TabHandles.Zizhi:Collapsible({
+    Title = "自制/自主缝合",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Appearance:Collapsible({
     Title = "墨水游戏",
-    Desc = "墨水游戏相关脚本",
-})
-
-TabHandles.Appearance:Button({
-    Title = "墨水游戏汉化脚本",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Appearance:Button({
+            Title = "墨水游戏汉化脚本",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
+            end
+        })
+        TabHandles.Appearance:Button({
+            Title = "TX墨水游戏",
+            Callback = function()
+                loadstring("\u{006c}\u{006f}\u{0061}\u{0064}\u{0073}\u{0074}\u{0072}\u{0069}\u{006e}\u{0067}\u{0028}\u{0067}\u{0061}\u{006d}\u{0065}\u{003a}\u{0048}\u{0074}\u{0074}\u{0070}\u{0047}\u{0065}\u{0074}\u{0028}\u{0022}\u{0068}\u{0074}\u{0074}\u{0070}\u{0073}\u{003a}\u{002f}\u{002f}\u{0072}\u{0061}\u{0077}\u{002e}\u{0067}\u{0069}\u{0074}\u{0068}\u{0075}\u{0062}\u{0075}\u{0073}\u{0065}\u{0072}\u{0063}\u{006f}\u{006e}\u{0074}\u{0065}\u{006e}\u{0074}\u{002e}\u{0063}\u{006f}\u{006d}\u{002f}\u{004a}\u{0073}\u{0059}\u{0062}\u{0036}\u{0036}\u{0036}\u{002f}\u{0054}\u{0055}\u{0049}\u{0058}\u{0055}\u{0049}\u{005f}\u{0071}\u{0075}\u{006e}\u{002d}\u{0038}\u{0030}\u{0039}\u{0037}\u{0037}\u{0031}\u{0031}\u{0034}\u{0031}\u{002f}\u{0072}\u{0065}\u{0066}\u{0073}\u{002f}\u{0068}\u{0065}\u{0061}\u{0064}\u{0073}\u{002f}\u{0054}\u{0055}\u{0049}\u{0058}\u{0055}\u{0049}\u{002f}\u{004d}\u{0053}\u{0059}\u{0058}\u{0022}\u{0029}\u{0029}\u{0028}\u{0029}")()
+            end
+        })
+        TabHandles.Appearance:Button({
+            Title = "墨水汉化防踢脚本",
+            Callback = function()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/S-WTB/-/refs/heads/main/WTB加载器'))()
+            end
+        })
+        TabHandles.Appearance:Button({
+            Title = "墨水游戏不知名脚本1",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/TexRBLX/Roblox-stuff/refs/heads/main/ink-game/testing.lua"))()
+            end
+        })
+        TabHandles.Appearance:Button({
+            Title = "墨水游戏不知名脚本2",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/XOTRXONY/INKGAME/main/INKGAMEE.lua", true))()
+            end
+        })
     end
 })
 
-TabHandles.Appearance:Button({
-    Title = "TX墨水游戏",
-    Callback = function()
-        loadstring("\u{006c}\u{006f}\u{0061}\u{0064}\u{0073}\u{0074}\u{0072}\u{0069}\u{006e}\u{0067}\u{0028}\u{0067}\u{0061}\u{006d}\u{0065}\u{003a}\u{0048}\u{0074}\u{0074}\u{0070}\u{0047}\u{0065}\u{0074}\u{0028}\u{0022}\u{0068}\u{0074}\u{0074}\u{0070}\u{0073}\u{003a}\u{002f}\u{002f}\u{0072}\u{0061}\u{0077}\u{002e}\u{0067}\u{0069}\u{0074}\u{0068}\u{0075}\u{0062}\u{0075}\u{0073}\u{0065}\u{0072}\u{0063}\u{006f}\u{006e}\u{0074}\u{0065}\u{006e}\u{0074}\u{002e}\u{0063}\u{006f}\u{006d}\u{002f}\u{004a}\u{0073}\u{0059}\u{0062}\u{0036}\u{0036}\u{0036}\u{002f}\u{0054}\u{0055}\u{0049}\u{0058}\u{0055}\u{0049}\u{005f}\u{0071}\u{0075}\u{006e}\u{002d}\u{0038}\u{0030}\u{0039}\u{0037}\u{0037}\u{0031}\u{0031}\u{0034}\u{0031}\u{002f}\u{0072}\u{0065}\u{0066}\u{0073}\u{002f}\u{0068}\u{0065}\u{0061}\u{0064}\u{0073}\u{002f}\u{0054}\u{0055}\u{0049}\u{0058}\u{0055}\u{0049}\u{002f}\u{004d}\u{0053}\u{0059}\u{0058}\u{0022}\u{0029}\u{0029}\u{0028}\u{0029}")()
+TabHandles.Appearane:Collapsible({
+    Title = "被遗弃",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
     end
 })
 
-TabHandles.Appearance:Button({
-    Title = "墨水汉化防踢脚本",
-    Callback = function()
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/S-WTB/-/refs/heads/main/WTB加载器'))()
-    end
-})
-
-TabHandles.Appearance:Button({
-    Title = "墨水游戏不知名脚本1",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/TexRBLX/Roblox-stuff/refs/heads/main/ink-game/testing.lua"))()
-    end
-})
-
-TabHandles.Appearance:Button({
-    Title = "墨水游戏不知名脚本2",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XOTRXONY/INKGAME/main/INKGAMEE.lua", true))()
-    end
-})
-
-TabHandles.Apearane:Paragraph({
+TabHandles.Apearane:Collapsible({
     Title = "死亡之死",
-    Desc = "死亡之死相关脚本",
-})
-
-TabHandles.Apearane:Button({
-    Title = "死亡之死1",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/gonnered/Die-Of-Death/refs/heads/main/MadE%20bY%20hOC"))()
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Apearane:Button({
+            Title = "死亡之死1",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/gonnered/Die-Of-Death/refs/heads/main/MadE%20bY%20hOC"))()
+            end
+        })
+        TabHandles.Apearane:Button({
+            Title = "死亡之死脚本2",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/XQ-HANHUA/XQ-/refs/heads/main/XQ%20starter"))()
+            end
+        })
     end
 })
 
-TabHandles.Apearane:Button({
-    Title = "死亡之死脚本2",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/XQ-HANHUA/XQ-/refs/heads/main/XQ%20starter"))()
-    end
-})
-
-TabHandles.Apearne:Paragraph({
+TabHandles.Apearne:Collapsible({
     Title = "俄亥俄州",
-    Desc = "俄亥俄州相关脚本",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
 })
 
-TabHandles.Apearn:Paragraph({
+TabHandles.Apearn:Collapsible({
     Title = "最强战场",
-    Desc = "最强战场相关脚本",
-})
-
-TabHandles.Apearn:Button({
-    Title = "最强战场脚本1",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/weatherwess-lgtm/Gui-Lite/refs/heads/main/Tsb"))()
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Apearn:Button({
+            Title = "最强战场脚本1",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/weatherwess-lgtm/Gui-Lite/refs/heads/main/Tsb"))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "最强战场脚本2",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/CombatGUI/refs/heads/main/TSBCombatGUI"))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "最强战场虚空秒杀",
+            Callback = function()
+                loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw",true))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "KJ最强战场",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Tariviste/Gojo/main/Source"))()
+                setclipboard("YieldingLeaks_3FuV7ie9k2rTJs4")
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "寒最强战场",
+            Callback = function()
+                getgenv().SCRIPT_KEY="ec1ecb11-0158-4854-b588-03f5c4c2ab7b"
+                loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/79db7e6036c154e1fddb5da8924290c2da08b1d8865749fbc2c0cd92db72ced4/download"))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "最强战场连续丢垃圾桶",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "最强战场杀戮光环",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
+            end
+        })
+        TabHandles.Apearn:Button({
+            Title = "最强战场动作脚本",
+            Callback = function()
+                loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Tsb-Movesets-Hub-45038"))()
+            end
+        })
     end
 })
 
-TabHandles.Apearn:Button({
-    Title = "最强战场脚本2",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/CombatGUI/refs/heads/main/TSBCombatGUI"))()
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "最强战场虚空秒杀",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastefy.app/REPoaFWC/raw",true))()
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "KJ最强战场",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Tariviste/Gojo/main/Source"))()
-        setclipboard("YieldingLeaks_3FuV7ie9k2rTJs4")
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "寒最强战场",
-    Callback = function()
-        getgenv().SCRIPT_KEY="ec1ecb11-0158-4854-b588-03f5c4c2ab7b"
-        loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/79db7e6036c154e1fddb5da8924290c2da08b1d8865749fbc2c0cd92db72ced4/download"))()
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "最强战场连续丢垃圾桶",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/gycgchgyfytdttr/shenqin/refs/heads/main/V1.0.0.txt"))()
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "最强战场杀戮光环",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Reapvitalized/TSB/refs/heads/main/SIONELTNAMATLASIA.lua"))()
-    end
-})
-
-TabHandles.Apearn:Button({
-    Title = "最强战场动作脚本",
-    Callback = function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/The-Strongest-Battlegrounds-Tsb-Movesets-Hub-45038"))()
-    end
-})
-
-TabHandles.Aperne:Paragraph({
+TabHandles.Aperne:Collapsible({
     Title = "Doors",
-    Desc = "Doors相关脚本",
-})
-
-TabHandles.Aperne:Button({
-    Title = "Doors脚本1",
-    Callback = function()
-        loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Aperne:Button({
+            Title = "Doors脚本1",
+            Callback = function()
+                loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
+            end
+        })
+        TabHandles.Aperne:Button({
+            Title = "Doors2",
+            Callback = function()
+                loadstring(game:HttpGet(("https://raw.githubusercontent.com/mstudio45/poopdoors_edited/main/poopdoors_edited.lua"),true))()
+            end
+        })
+        TabHandles.Aperne:Button({
+            Title = "xa Doors脚本",
+            Callback = function()
+                loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
+            end
+        })
     end
 })
 
-TabHandles.Aperne:Button({
-    Title = "Doors2",
-    Callback = function()
-        loadstring(game:HttpGet(("https://raw.githubusercontent.com/mstudio45/poopdoors_edited/main/poopdoors_edited.lua"),true))()
-    end
-})
-
-TabHandles.Aperne:Button({
-    Title = "xa Doors脚本",
-    Callback = function()
-        loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-    end
-})
-
-TabHandles.Apeare:Paragraph({
+TabHandles.Apeare:Collapsible({
     Title = "亡命速递",
-    Desc = "亡命速递相关脚本",
-})
-
-TabHandles.Apeare:Button({
-    Title = "亡命速递自动收集（没有界面执行即可使用）",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/SNSDARK/Scripts/refs/heads/main/Deadly%20Delivery.lua"))()
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Apeare:Button({
+            Title = "亡命速递自动收集（没有界面执行即可使用）",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/SNSDARK/Scripts/refs/heads/main/Deadly%20Delivery.lua"))()
+            end
+        })
+        TabHandles.Apeare:Button({
+            Title = "亡命速递汉化脚本",
+            Callback = function()
+                loadstring(game:HttpGet(
+                    "\x68\x74\x74\x70\x73\x3a\x2f\x2f"..
+                    "\x72\x61\x77\x2e\x67\x69\x74\x68\x75\x62\x75\x73\x65\x72\x63\x6f\x6e\x74\x65\x6e\x74\x2e\x63\x6f\x6d\x2f"..
+                    "\x31\x36\x37\x38\x39\x31\x2d\x53\x63\x72\x69\x70\x74\x2f\x31\x36\x2d\x2f"..
+                    "\x72\x65\x66\x73\x2f\x68\x65\x61\x64\x73\x2f\x6d\x61\x69\x6e\x2f"..
+                    "\x77\x6d\x73\x64\xe5\x8a\xa8\xe7\x94\xbb\xe6\x9c\xaa\xe6\xb7\xb7\xe6\xb7\x86\x20\x28\x31\x29\x2e\x6c\x75\x61"
+                ))()
+            end
+        })
+        TabHandles.Apeare:Button({
+            Title = "亡命速递脚本1",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/ShenJiaoBen/ScriptLoader/refs/heads/main/Linni_FreeLoader.lua"))()
+            end
+        })
     end
 })
 
-TabHandles.Apeare:Button({
-    Title = "亡命速递汉化脚本",
-    Callback = function()
-        loadstring(game:HttpGet(
-            "\x68\x74\x74\x70\x73\x3a\x2f\x2f"..
-            "\x72\x61\x77\x2e\x67\x69\x74\x68\x75\x62\x75\x73\x65\x72\x63\x6f\x6e\x74\x65\x6e\x74\x2e\x63\x6f\x6d\x2f"..
-            "\x31\x36\x37\x38\x39\x31\x2d\x53\x63\x72\x69\x70\x74\x2f\x31\x36\x2d\x2f"..
-            "\x72\x65\x66\x73\x2f\x68\x65\x61\x64\x73\x2f\x6d\x61\x69\x6e\x2f"..
-            "\x77\x6d\x73\x64\xe5\x8a\xa8\xe7\x94\xbb\xe6\x9c\xaa\xe6\xb7\xb7\xe6\xb7\x86\x20\x28\x31\x29\x2e\x6c\x75\x61"
-        ))()
+TabHandles.Apetyrne:Collapsible({
+    Title = "通缉",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
     end
 })
 
-TabHandles.Apeare:Button({
-    Title = "亡命速递脚本1",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ShenJiaoBen/ScriptLoader/refs/heads/main/Linni_FreeLoader.lua"))()
+TabHandles.Apetytrne:Collapsible({
+    Title = "监狱人生",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Apetytrnuye:Collapsible({
+    Title = "死铁轨",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+        TabHandles.Apetytrnuye:Button({
+            Title = "死铁轨脚本1",
+            Callback = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/refs/heads/main/DeadRails", true))()
+            end
+        })
+    end
+})
+
+TabHandles.Apetyttrne:Collapsible({
+    Title = "内脏与黑火药",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanhsuree:Collapsible({
+    Title = "项目三角洲",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanrhsuree:Collapsible({
+    Title = "鱼",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanrhsuree2:Collapsible({
+    Title = "兵工厂",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanrhsurtree:Collapsible({
+    Title = "河北唐县",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanrhsutree:Collapsible({
+    Title = "51区",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
+    end
+})
+
+TabHandles.Aparanrhsyuree:Collapsible({
+    Title = "死铁轨2",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
     end
 })
 
