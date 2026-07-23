@@ -115,6 +115,7 @@ local Tabs = {
 }
 
 local TabHandles = {
+    Gonggao = Tabs.KY1:Tab({ Title = "公告", Icon = "bell" }),
     Elements = Tabs.Main:Tab({ Title = "功能", Icon = "layout-grid" }),
     Appearance = Tabs.Settings:Tab({ Title = "墨水游戏", Icon = "brush" }),
     Appearane = Tabs.Settings:Tab({ Title = "被遗弃", Icon = "brush" }),
@@ -143,6 +144,14 @@ TabHandles.Elements:Button({
     Title = "KY飞行",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/ckckck123456/Bacon-Box/refs/heads/main/KY%E9%A3%9E%E8%A1%8C"))()
+    end
+})
+
+TabHandles.Gonggao:Collapsible({
+    Title = "公告",
+    Icon = "chevron-down",
+    Opened = false,
+    Content = function()
     end
 })
 
