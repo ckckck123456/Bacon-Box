@@ -115,7 +115,6 @@ local Tabs = {
 }
 
 local TabHandles = {
-    Gonggao = Tabs.KY1:Tab({ Title = "公告", Icon = "bell" }),
     Elements = Tabs.Main:Tab({ Title = "功能", Icon = "layout-grid" }),
     Appearance = Tabs.Settings:Tab({ Title = "墨水游戏", Icon = "brush" }),
     Appearane = Tabs.Settings:Tab({ Title = "被遗弃", Icon = "brush" }),
@@ -136,22 +135,23 @@ local TabHandles = {
     Aparanrhsutree = Tabs.Settings:Tab({ Title = "51区", Icon = "brush" }),
     Aparanrhsyuree = Tabs.Settings:Tab({ Title = "死铁轨", Icon = "brush" }),
     Config = Tabs.Utilities:Tab({ Title = "非服务器", Icon = "settings" }),
+    KY1 = Window:Section({ Title = "公告", Opened = true }),
 }
 local noclipActive = false
 local noclipThread = nil
-
-TabHandles.Elements:Button({
-    Title = "KY飞行",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/ckckck123456/Bacon-Box/refs/heads/main/KY%E9%A3%9E%E8%A1%8C"))()
-    end
-})
 
 TabHandles.Gonggao:Collapsible({
     Title = "公告",
     Icon = "chevron-down",
     Opened = false,
     Content = function()
+    end
+})
+
+TabHandles.Elements:Button({
+    Title = "KY飞行",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ckckck123456/Bacon-Box/refs/heads/main/KY%E9%A3%9E%E8%A1%8C"))()
     end
 })
 
